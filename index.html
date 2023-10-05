@@ -15,19 +15,19 @@ $(function () {
     recognition.continuous = true;
     recognition.interimResults = false;
     recognition.onresult = function (event) {
-        var txtRec = '';
+        var recording = '';
         for (var i = event.resultIndex; i < event.results.length; ++i) {
-                txtRec += event.results[i][0].transcript;
+                recording += event.results[i][0].transcript;
         }
-        if ($('#txtArea').val != txtRec) {
-            $('#txtArea').val(txtRec);
-            $('#txtAreaResponse').val("loading...");
-            sendToGPT(txtRec);
+        if ($('#text').val != recording) {
+            $('#text').val(recording);
+            $('#textResponse').val("loading...");
+            sendToGPT(recording);
         }
     }
   
   $('#startRecognition').click(function () {
-    $('#txtArea').focus();
+    $('#text').focus();
     console.log("started");
     recognition.start();
     console.log("started - nextline");
@@ -66,7 +66,7 @@ $.ajax({
             console.log(JSON.stringify(data["choices"][0]["message"]["content"]));
             JSON.stringify(data["choices"][0]["message"]["content"]);
             var response = JSON.stringify(data["choices"][0]["message"]["content"]);
-            $("#txtAreaResponse").val(response);
+            $("#textResponse").val(response);
             let testing = new SpeechSynthesisUtterance(response);
             testing.default=false; 
             testing.localservice=true;
@@ -95,8 +95,7 @@ elevenlabs token (not stored) - not implemented yet<br>
 <input id="elevenlabstoken"><button onclick="">submit</button><br>
 <button id="startRecognition">Start Listening</button>
 <button id="stopRecognition">Stop Listening</button><br>
-<!--<select id="voiceSelect"></select>-->
-<textarea id="txtArea" style="left: 0; width: 50vw; height: 25vh;"></textarea>
-<textarea id="txtAreaResponse" style="left: 0; width: 50vw; height: 25vh;"></textarea>
+<textarea id="text" style="left: 0; width: 50vw; height: 25vh;"></textarea>
+<textarea id="textResponse" style="left: 0; width: 50vw; height: 25vh;"></textarea>
 </body>
 </html>
