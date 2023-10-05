@@ -13,7 +13,7 @@ $(function () {
     }
 
     recognition.continuous = true;
-    recognition.interimResults = false;
+    recognition.interimResults = true;
     recognition.onresult = function (event) {
         var txtRec = '';
         for (var i = event.resultIndex; i < event.results.length; ++i) {
@@ -21,8 +21,6 @@ $(function () {
         }
         if ($('#txtArea').val != txtRec) {
             $('#txtArea').val(txtRec);
-            $('#txtAreaResponse').val("loading...");
-            sendToGPT(txtRec);
         }
     }
   
@@ -37,51 +35,7 @@ $(function () {
   });
 
 });
-function sendToGPT(transcript) {
-var data = {
-    "model": "gpt-3.5-turbo",
-    "messages": [
-      {
-        "role": "system",
-        "content": "You are a helpful assistant."
-      },
-      {
-        "role": "user",
-        "content": transcript
-      }
-    ]
-  };
 console.log(data);
-$.ajax({
-        url: 'https://api.openai.com/v1/chat/completions',
-        beforeSend: function(xhr) {
-             xhr.setRequestHeader("Authorization", "Bearer " + $('#openaitoken').val() + "");
-        }, 
-        type: "POST",
-        cache: false,
-        dataType: 'json',
-        contentType: 'application/json',
-        data: JSON.stringify({"model": "gpt-3.5-turbo","messages": [{"role": "system", "content": "You are a bot named wintermute. You don't use any punctuation aside from period."},{"role": "user","content": transcript}]}),
-        success: function(data){
-            console.log(JSON.stringify(data["choices"][0]["message"]["content"]));
-            JSON.stringify(data["choices"][0]["message"]["content"]);
-            var response = JSON.stringify(data["choices"][0]["message"]["content"]);
-            $("#txtAreaResponse").val(response);
-            let testing = new SpeechSynthesisUtterance(response);
-            testing.default=false; 
-            testing.localservice=true;
-            testing.lang = "en-GB";
-            //testing.pitch = 0.5;
-            testing.voice = speechSynthesis.getVoices().filter(function(voice) {
-                return voice.name == "Google UK English";
-            })[0];
-            speechSynthesis.speak(testing);
-
-        },
-            error: function(){
-            alert("Cannot get data");
-        }
-});
 }
 </script>
 </head>
@@ -90,13 +44,9 @@ $.ajax({
 Requirements: Recent enough chrome for webspeechapi implementation<br>
 Known issues: Don't navigate away from page. To refresh close tab and reopen<br><br>
 openai token (not stored)<br>
-<input id="openaitoken"><button onclick="">submit</button><br>
-elevenlabs token (not stored) - not implemented yet<br>
-<input id="elevenlabstoken"><button onclick="">submit</button><br>
 <button id="startRecognition">Start Listening</button>
 <button id="stopRecognition">Stop Listening</button><br>
 <!--<select id="voiceSelect"></select>-->
 <textarea id="txtArea" style="left: 0; width: 50vw; height: 25vh;"></textarea>
-<textarea id="txtAreaResponse" style="left: 0; width: 50vw; height: 25vh;"></textarea>
 </body>
 </html>
