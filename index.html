@@ -3,7 +3,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script>
 $(function () {
- var stopped = "false";
     try {
         var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
         var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent
@@ -13,19 +12,21 @@ $(function () {
     }
 
     recognition.continuous = true;
-    recognition.interimResults = true;
+    recognition.interimResults = false;
     recognition.onresult = function (event) {
         var txtRec = '';
         for (var i = event.resultIndex; i < event.results.length; ++i) {
                 txtRec += event.results[i][0].transcript;
         }
-        if ($('#txtArea').val != txtRec) {
-            $('#txtArea').val(txtRec);
-        }
+        const recorded = textRec;
+        recorded = recorded.charAt(0).toUpperCase() + recorded.slice(1);
+        console.log(recorded);
+        $('#text').val($('#text').val() + recorded + ".");
+        console.log(recorded);
     }
   
   $('#startRecognition').click(function () {
-    $('#txtArea').focus();
+    $('#text').focus();
     console.log("started");
     recognition.start();
     console.log("started - nextline");
@@ -35,18 +36,15 @@ $(function () {
   });
 
 });
-console.log(data);
-}
 </script>
 </head>
 <body>
-<h1>Desktop Chrome Only</h1>
+<h1>Desktop Chrome Transcriber</h1>
 Requirements: Recent enough chrome for webspeechapi implementation<br>
 Known issues: Don't navigate away from page. To refresh close tab and reopen<br><br>
-openai token (not stored)<br>
 <button id="startRecognition">Start Listening</button>
 <button id="stopRecognition">Stop Listening</button><br>
 <!--<select id="voiceSelect"></select>-->
-<textarea id="txtArea" style="left: 0; width: 50vw; height: 25vh;"></textarea>
+<textarea id="text" style="left: 0; width: 50vw; height: 25vh;"></textarea>
 </body>
 </html>
